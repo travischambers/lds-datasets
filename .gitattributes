@@ -1,0 +1,2 @@
+meetinghouses/buildings.json filter=lfs diff=lfs merge=lfs -text
+buildings.json filter=lfs diff=lfs merge=lfs -text
