@@ -360,8 +360,7 @@ def get_buildings_from_web(update_json: bool = False):
     base_url = (
         "https://maps.churchofjesuschrist.org/api/maps-proxy/v2/locations/identify"
     )
-    NUM_BUILDINGS = 100000
-    # NUM_BUILDINGS = 100_000
+    NUM_BUILDINGS = 100_000
     layers = "MEETINGHOUSE"
     filters = ""
     associated = "WARDS"
