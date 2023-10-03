@@ -5,7 +5,7 @@ description = ""
 authors = ["Travis Chambers <tjchambers32@gmail.com>"]
 license = "CC0 1.0 Universal"
 readme = "README.md"
-packages = [{ include = "lds_datasets" }]
+packages = [{ include = "lds_datasets", from="src" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"

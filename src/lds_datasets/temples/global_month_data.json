@@ -1,0 +1,55 @@
+{
+    "2023_8": {
+        "temples": 174,
+        "PROXY_BAPTISM": {
+            "monthly_capacity": 372213,
+            "monthly_online_capacity": 0,
+            "monthly_reserved": 158632,
+            "monthly_reserved_m": 78016,
+            "monthly_reserved_f": 80616,
+            "monthly_days_with_available_ordinances": 2556,
+            "monthly_sessions": 22195,
+            "monthly_m_f_ratio": -0.01639013565989208
+        },
+        "PROXY_INITIATORY": {
+            "monthly_capacity": 329086,
+            "monthly_online_capacity": 0,
+            "monthly_reserved": 40985,
+            "monthly_reserved_m": 15082,
+            "monthly_reserved_f": 25903,
+            "monthly_days_with_available_ordinances": 2807,
+            "monthly_sessions": 34931,
+            "monthly_m_f_ratio": -0.26402342320361105
+        },
+        "PROXY_ENDOWMENT": {
+            "monthly_capacity": 1108949,
+            "monthly_online_capacity": 1037422,
+            "monthly_reserved": 151380,
+            "monthly_reserved_m": 56894,
+            "monthly_reserved_f": 80289,
+            "monthly_days_with_available_ordinances": 2814,
+            "monthly_sessions": 20532,
+            "monthly_m_f_ratio": -0.17053862359038657
+        },
+        "PROXY_SEALING": {
+            "monthly_capacity": 367355,
+            "monthly_online_capacity": 0,
+            "monthly_reserved": 38955,
+            "monthly_reserved_m": 16967,
+            "monthly_reserved_f": 21988,
+            "monthly_days_with_available_ordinances": 2786,
+            "monthly_sessions": 26067,
+            "monthly_m_f_ratio": -0.12889231164163778
+        },
+        "LIVING_ENDOWMENT": {
+            "monthly_capacity": 0,
+            "monthly_online_capacity": 0,
+            "monthly_reserved": 0,
+            "monthly_reserved_m": 0,
+            "monthly_reserved_f": 0,
+            "monthly_days_with_available_ordinances": 70,
+            "monthly_sessions": 181,
+            "monthly_m_f_ratio": 0
+        }
+    }
+}

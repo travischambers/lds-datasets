@@ -309,8 +309,8 @@ def calculate_stats(buildings: dict[str, Any]):
     # buildings_by_country = get_buildings_by_country(buildings)
     # avg_size_by_country(buildings)
     # get_units_at_time(buildings, city="Rexburg", time="Su 11:00")
-    # get_unit_types(buildings)
-    get_num_units_per_building(buildings)
+    get_unit_types(buildings)
+    # get_num_units_per_building(buildings)
 
 
 def get_buildings_from_json():
