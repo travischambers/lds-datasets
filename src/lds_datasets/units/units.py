@@ -22,7 +22,14 @@ script_start_time = datetime.now()
 script_start_second = script_start_time.strftime("%Y_%m_%d_%H:%M:%S")
 script_start_day = script_start_time.strftime("%Y_%m_%d")
 
-
+yesterday = (script_start_time - timedelta(days=1)).strftime("%Y_%m_%d")
+ereyesterday = (script_start_time - timedelta(days=2)).strftime("%Y_%m_%d")
+TODAY_WARDS_JSON = f"data/wards_{script_start_day}.json"
+YESTERDAY_WARDS_JSON = f"data/wards_{yesterday}.json"
+TODAY_STAKES_JSON = f"data/stakes_{script_start_day}.json"
+YESTERDAY_STAKES_JSON = f"data/stakes_{yesterday}.json"
+EREYESTERDAY_WARDS_JSON = f"data/wards_{ereyesterday}.json"
+EREYESTERDAY_STAKES_JSON = f"data/stakes_{ereyesterday}.json"
 setup_logging(
     json_logs=False, log_level="INFO", logfile=f"logs/units_{script_start_second}.log"
 )
@@ -406,12 +413,6 @@ class CountryStats(BaseModel):
     is_flag=True,
     help="Get stakes from web, vs local json.",
 )
-@click.option(
-    "--force_update_json",
-    default=False,
-    is_flag=True,
-    help="Update json files, independent of timestamps.",
-)
 @click.option("--skip_stats", default=False, is_flag=True, help="Skip stats.")
 @click.option(
     "--show_figs",
@@ -422,23 +423,29 @@ class CountryStats(BaseModel):
 def main(
     ward_web: bool,
     stake_web: bool,
-    force_update_json: bool,
     skip_stats: bool,
     show_figs: bool,
 ) -> None:
     """Main."""
+    logger.info(
+        "Starting script with flags.",
+        ward_web=ward_web,
+        stake_web=stake_web,
+        skip_stats=skip_stats,
+        show_figs=show_figs,
+    )
     old_wards = get_wards_from_json()
-    old_ward_count, old_branch_count = count_unit_types(old_wards, "Ward")
+    ward_count_old, branch_count_old = count_unit_types(old_wards, "Ward")
     old_stakes = get_stakes_from_json()
-    old_stake_count, old_district_count = count_unit_types(old_stakes, "Stake")
+    stake_count_old, district_count_old = count_unit_types(old_stakes, "Stake")
 
     if stake_web:
-        stakes = get_stakes_from_web(force_update_json=force_update_json)
+        stakes = get_stakes_from_web()
     else:
         stakes = get_stakes_from_json()
 
     if ward_web:
-        wards = get_wards_from_web(force_update_json=force_update_json)
+        wards = get_wards_from_web()
     else:
         wards = get_wards_from_json()
 
@@ -450,10 +457,10 @@ def main(
 
     stake_count, district_count = count_unit_types(stakes, "Stake")
     ward_count, branch_count = count_unit_types(wards, "Ward")
-    net_stakes = stake_count - old_stake_count
-    net_districts = district_count - old_district_count
-    net_wards = ward_count - old_ward_count
-    net_branches = branch_count - old_branch_count
+    net_stakes = stake_count - stake_count_old
+    net_districts = district_count - district_count_old
+    net_wards = ward_count - ward_count_old
+    net_branches = branch_count - branch_count_old
 
     append_daily_summary(
         stake_count,
@@ -837,7 +844,7 @@ def calculate_ward_stats(wards: set[Unit], show_figs: bool = False) -> None:
 def get_stakes_from_json() -> set[Unit]:
     """Get stakes from json."""
     stakes: set[Unit] = set()
-    with open("data/stakes.json", "r") as f:
+    with open(TODAY_STAKES_JSON, "r") as f:
         stakes_json = json.load(f)
     for stake_json in stakes_json["stakes"]:
         stake = Unit.model_validate(stake_json)
@@ -848,7 +855,7 @@ def get_stakes_from_json() -> set[Unit]:
 def get_wards_from_json() -> set[Unit]:
     """Get wards from json."""
     wards: set[Unit] = set()
-    with open("data/wards.json", "r") as f:
+    with open(TODAY_WARDS_JSON, "r") as f:
         wards_json = json.load(f)
     for ward_json in wards_json["wards"]:
         ward = Unit.model_validate(ward_json)
@@ -856,7 +863,7 @@ def get_wards_from_json() -> set[Unit]:
     return wards
 
 
-def get_stakes_from_web(force_update_json: bool = True) -> set[Unit]:
+def get_stakes_from_web() -> set[Unit]:
     """Get stakes from web."""
     headers = {
         "Accept": "application/json",
@@ -911,33 +918,7 @@ def get_stakes_from_web(force_update_json: bool = True) -> set[Unit]:
     old_stakes = get_stakes_from_json()
     write_daily_files(old_units=old_stakes, new_units=stakes, unit_type="Stake")
 
-    stakes_dict = [stake.model_dump() for stake in stakes]
-    file_path = Path("data/stakes.json")
-    file_path.parent.mkdir(parents=True, exist_ok=True)
-    if file_path.exists():
-        with open(file_path, "r") as f:
-            wards_json = json.load(f)
-            timestamp = wards_json["timestamp"]
-            timestamp = datetime.fromisoformat(timestamp)
-        # only update wards.json if force_update_json is True
-        # or the timestamp is older than 1 day
-        if force_update_json or (datetime.now() - timestamp) > timedelta(days=1):
-            with open(file_path, "w") as f:
-                stakes_output = {
-                    "stakes": stakes_dict,
-                    "timestamp": datetime.now().isoformat(),
-                }
-                json.dump(stakes_output, f, indent=4)
-        else:
-            logger.info("Stakes.json is up to date. Update skipped.")
-    else:
-        # stakes.json didn't previously exist, so create it
-        with open(file_path, "w") as f:
-            stakes_output = {
-                "wards": stakes_dict,
-                "timestamp": datetime.now().isoformat(),
-            }
-            json.dump(stakes_output, f, indent=4)
+    write_units_json(units=stakes, unit_type="Stake")
     return stakes
 
 
@@ -1017,19 +998,18 @@ def write_daily_files(
         small_units_removed=len(small_units_removed),
     )
     # write to 4 files
-    today = datetime.today().strftime("%Y_%m_%d")
-    today_dir = Path(f"data/daily/{today}")
-    today_dir.mkdir(parents=True, exist_ok=True)
+    daily_dir = Path(f"data/daily/{script_start_day}")
+    daily_dir.mkdir(parents=True, exist_ok=True)
     if unit_type == "Stake":
-        file_1 = Path(today_dir / "stakes_added.json")
-        file_2 = Path(today_dir / "stakes_removed.json")
-        file_3 = Path(today_dir / "districts_added.json")
-        file_4 = Path(today_dir / "districts_removed.json")
+        file_1 = Path(daily_dir / "stakes_added.json")
+        file_2 = Path(daily_dir / "stakes_removed.json")
+        file_3 = Path(daily_dir / "districts_added.json")
+        file_4 = Path(daily_dir / "districts_removed.json")
     elif unit_type == "Ward":
-        file_1 = Path(today_dir / "wards_added.json")
-        file_2 = Path(today_dir / "wards_removed.json")
-        file_3 = Path(today_dir / "branches_added.json")
-        file_4 = Path(today_dir / "branches_removed.json")
+        file_1 = Path(daily_dir / "wards_added.json")
+        file_2 = Path(daily_dir / "wards_removed.json")
+        file_3 = Path(daily_dir / "branches_added.json")
+        file_4 = Path(daily_dir / "branches_removed.json")
 
     with open(file_1, "w") as f:
         json.dump([unit.model_dump() for unit in units_added], f, indent=4)
@@ -1042,9 +1022,10 @@ def write_daily_files(
 
     with open(file_4, "w") as f:
         json.dump([unit.model_dump() for unit in small_units_removed], f, indent=4)
+    logger.info("Finished writing to daily files.", unit_type=unit_type)
 
 
-def get_wards_from_web(force_update_json: bool = True) -> set[Unit]:
+def get_wards_from_web() -> set[Unit]:
     """Get wards from web."""
 
     headers = {
@@ -1141,34 +1122,37 @@ def get_wards_from_web(force_update_json: bool = True) -> set[Unit]:
     old_wards = get_wards_from_json()
     write_daily_files(old_units=old_wards, new_units=wards, unit_type="Ward")
 
-    wards_dict = [ward.model_dump() for ward in wards]
-    file_path = Path("data/wards.json")
-    file_path.parent.mkdir(parents=True, exist_ok=True)
-    if file_path.exists():
-        with open(file_path, "r") as f:
-            wards_json = json.load(f)
-            timestamp = wards_json["timestamp"]
-            timestamp = datetime.fromisoformat(timestamp)
-        # only update wards.json if force_update_json is True
-        # or the timestamp is older than 1 day
-        if force_update_json or (datetime.now() - timestamp) > timedelta(days=1):
-            with open(file_path, "w") as f:
-                wards_output = {
-                    "wards": wards_dict,
-                    "timestamp": datetime.now().isoformat(),
-                }
-                json.dump(wards_output, f, indent=4)
-        else:
-            logger.info("Wards.json is up to date. Update skipped.")
-    else:
-        # wards.json didn't previously exist, so create it
-        with open(file_path, "w") as f:
-            wards_output = {
-                "wards": wards_dict,
-                "timestamp": datetime.now().isoformat(),
-            }
-            json.dump(wards_output, f, indent=4)
+    write_units_json(wards, unit_type="Ward")
     return wards
+
+
+def write_units_json(units: set[Unit], unit_type: Literal["Stake", "Ward"]) -> None:
+    """Write wards/stakes to json.
+
+    This method removes the old json files if they exist.
+    e.g. If today is 2023_10_07, then we will delete 2023_10_05 and leave 2023_10_06.
+    """
+    units_dict = [unit.model_dump() for unit in units]
+    if unit_type == "Stake":
+        file_path = Path(TODAY_STAKES_JSON)
+        ereyesterday_path = Path(EREYESTERDAY_STAKES_JSON)
+    elif unit_type == "Ward":
+        file_path = Path(TODAY_WARDS_JSON)
+        ereyesterday_path = Path(EREYESTERDAY_WARDS_JSON)
+    else:
+        raise ValueError(f"Invalid unit_type: {unit_type}")
+    # delete ereyesterday's file
+    if ereyesterday_path.exists():
+        ereyesterday_path.unlink()
+
+    # write today's file
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(file_path, "w") as f:
+        units_output = {
+            "wards": units_dict,
+            "timestamp": script_start_time.isoformat(),
+        }
+        json.dump(units_output, f, indent=4)
 
 
 def _get_wards_at_coords(
