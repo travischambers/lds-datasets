@@ -2,6 +2,12 @@
 data/**
 logs/**
 
+# MACOS
+.DS_STORE
+
+# VS CODE
+.vscode/**
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
