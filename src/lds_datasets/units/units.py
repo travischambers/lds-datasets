@@ -434,20 +434,20 @@ def main(
         skip_stats=skip_stats,
         show_figs=show_figs,
     )
-    old_wards = get_wards_from_json()
+    old_wards = get_yesterday_wards_json()
     ward_count_old, branch_count_old = count_unit_types(old_wards, "Ward")
-    old_stakes = get_stakes_from_json()
+    old_stakes = get_yesterday_stakes_json()
     stake_count_old, district_count_old = count_unit_types(old_stakes, "Stake")
 
     if stake_web:
         stakes = get_stakes_from_web()
     else:
-        stakes = get_stakes_from_json()
+        stakes = get_yesterday_stakes_json()
 
     if ward_web:
         wards = get_wards_from_web()
     else:
-        wards = get_wards_from_json()
+        wards = get_yesterday_wards_json()
 
     if not skip_stats:
         calculate_stake_stats(stakes, show_figs)
@@ -841,8 +841,8 @@ def calculate_ward_stats(wards: set[Unit], show_figs: bool = False) -> None:
     plt.show()
 
 
-def get_stakes_from_json() -> set[Unit]:
-    """Get stakes from json."""
+def get_stakes_json() -> set[Unit]:
+    """Get stakes from today's json file."""
     stakes: set[Unit] = set()
     with open(TODAY_STAKES_JSON, "r") as f:
         stakes_json = json.load(f)
@@ -852,10 +852,32 @@ def get_stakes_from_json() -> set[Unit]:
     return stakes
 
 
-def get_wards_from_json() -> set[Unit]:
-    """Get wards from json."""
+def get_yesterday_stakes_json() -> set[Unit]:
+    """Get stakes from yesterday's json file."""
+    stakes: set[Unit] = set()
+    with open(YESTERDAY_STAKES_JSON, "r") as f:
+        stakes_json = json.load(f)
+    for stake_json in stakes_json["stakes"]:
+        stake = Unit.model_validate(stake_json)
+        stakes.add(stake)
+    return stakes
+
+
+def get_wards_json() -> set[Unit]:
+    """Get wards from today's json file."""
     wards: set[Unit] = set()
     with open(TODAY_WARDS_JSON, "r") as f:
+        wards_json = json.load(f)
+    for ward_json in wards_json["wards"]:
+        ward = Unit.model_validate(ward_json)
+        wards.add(ward)
+    return wards
+
+
+def get_yesterday_wards_json() -> set[Unit]:
+    """Get wards from json."""
+    wards: set[Unit] = set()
+    with open(YESTERDAY_WARDS_JSON, "r") as f:
         wards_json = json.load(f)
     for ward_json in wards_json["wards"]:
         ward = Unit.model_validate(ward_json)
@@ -894,16 +916,18 @@ def get_stakes_from_web() -> set[Unit]:
         data = response.json()
         stake_models = [Unit.model_validate(stake) for stake in data]
 
-        pre_region_update_count = len(stakes)
+        pre_update_count = len(stakes)
         stakes.update(stake_models)
-        post_region_update_count = len(stakes)
+        post_update_count = len(stakes)
         region_end_time = time.time()
         logger.info(
             "Finished Stakes for city.",
             coordinates=coord,
             region_name=coordinate.city,
             region_time=region_end_time - region_start_time,
-            num_stakes_added=post_region_update_count - pre_region_update_count,
+            num_stakes_added=post_update_count - pre_update_count,
+            num_duplicates=len(data) - (post_update_count - pre_update_count),
+            max_stakes=nearest,
             num_api_requests=1,
         )
     scrape_end_time = time.time()
@@ -915,7 +939,7 @@ def get_stakes_from_web() -> set[Unit]:
     )
 
     # compare with old stakes.json
-    old_stakes = get_stakes_from_json()
+    old_stakes = get_yesterday_stakes_json()
     write_daily_files(old_units=old_stakes, new_units=stakes, unit_type="Stake")
 
     write_units_json(units=stakes, unit_type="Stake")
@@ -960,7 +984,7 @@ def write_daily_files(
                 raise ValueError(f"Invalid unit_type: {unit_type}")
 
     for unit in old_units:
-        if unit not in old_units:
+        if unit not in new_units:
             if unit_type == "Stake":
                 if unit.organizationType and unit.organizationType.display == "Stake":
                     units_removed.add(unit)
@@ -1119,7 +1143,7 @@ def get_wards_from_web() -> set[Unit]:
         total_api_requests=total_requests,
     )
     # compare with old wards.json
-    old_wards = get_wards_from_json()
+    old_wards = get_yesterday_wards_json()
     write_daily_files(old_units=old_wards, new_units=wards, unit_type="Ward")
 
     write_units_json(wards, unit_type="Ward")
@@ -1148,8 +1172,14 @@ def write_units_json(units: set[Unit], unit_type: Literal["Stake", "Ward"]) -> N
     # write today's file
     file_path.parent.mkdir(parents=True, exist_ok=True)
     with open(file_path, "w") as f:
+        if unit_type == "Stake":
+            key = "stakes"
+        elif unit_type == "Ward":
+            key = "wards"
+        else:
+            raise ValueError(f"Invalid unit_type: {unit_type}")
         units_output = {
-            "wards": units_dict,
+            key: units_dict,
             "timestamp": script_start_time.isoformat(),
         }
         json.dump(units_output, f, indent=4)
