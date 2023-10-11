@@ -855,11 +855,43 @@ def get_stakes_json() -> set[Unit]:
 def get_yesterday_stakes_json() -> set[Unit]:
     """Get stakes from yesterday's json file."""
     stakes: set[Unit] = set()
-    with open(YESTERDAY_STAKES_JSON, "r") as f:
-        stakes_json = json.load(f)
-    for stake_json in stakes_json["stakes"]:
-        stake = Unit.model_validate(stake_json)
-        stakes.add(stake)
+    try:
+        with open(YESTERDAY_STAKES_JSON, "r") as f:
+            stakes_json = json.load(f)
+        for stake_json in stakes_json["stakes"]:
+            stake = Unit.model_validate(stake_json)
+            stakes.add(stake)
+    except FileNotFoundError:
+        num_days = 10
+        logger.warning(
+            "Yesterday's stakes json not found. Did the script run yesterday? Looking back several days for a file."
+        )  # noqa: E501
+        for i in range(num_days):
+            prior_day = (datetime.today() - timedelta(days=i)).strftime("%Y_%m_%d")
+            prior_day_json = f"data/stakes_{prior_day}.json"
+            try:
+                with open(prior_day_json, "r") as f:
+                    logger.info(
+                        "Found a stakes json file from a prior day.",
+                        prior_day=prior_day,
+                    )
+                    stakes_json = json.load(f)
+                for stake_json in stakes_json["stakes"]:
+                    stake = Unit.model_validate(stake_json)
+                    stakes.add(stake)
+                break
+            except FileNotFoundError:
+                logger.warning(
+                    "Stakes json file not found for prior day.", prior_day=prior_day
+                )
+                continue
+        else:
+            logger.error(
+                "Stakes json file not found for any prior day.", num_days=num_days
+            )
+            raise ValueError(
+                f"Stakes json file not found for any of the last {num_days} days."
+            )
     return stakes
 
 
@@ -877,11 +909,43 @@ def get_wards_json() -> set[Unit]:
 def get_yesterday_wards_json() -> set[Unit]:
     """Get wards from json."""
     wards: set[Unit] = set()
-    with open(YESTERDAY_WARDS_JSON, "r") as f:
-        wards_json = json.load(f)
-    for ward_json in wards_json["wards"]:
-        ward = Unit.model_validate(ward_json)
-        wards.add(ward)
+    try:
+        with open(YESTERDAY_WARDS_JSON, "r") as f:
+            wards_json = json.load(f)
+        for ward_json in wards_json["wards"]:
+            ward = Unit.model_validate(ward_json)
+            wards.add(ward)
+    except FileNotFoundError:
+        num_days = 10
+        logger.warning(
+            "Yesterday's wards json not found. Did the script run yesterday? Looking back several days for a file."
+        )  # noqa: E501
+        for i in range(num_days):
+            prior_day = (datetime.today() - timedelta(days=i)).strftime("%Y_%m_%d")
+            prior_day_json = f"data/wards_{prior_day}.json"
+            try:
+                with open(prior_day_json, "r") as f:
+                    logger.info(
+                        "Found a wards json file from a prior day.", prior_day=prior_day
+                    )
+                    wards_json = json.load(f)
+                for ward_json in wards_json["wards"]:
+                    ward = Unit.model_validate(ward_json)
+                    wards.add(ward)
+                break
+            except FileNotFoundError:
+                logger.warning(
+                    "Wards json file not found for prior day.", prior_day=prior_day
+                )
+                continue
+        else:
+            logger.error(
+                "Wards json file not found for any prior day.", num_days=num_days
+            )
+            raise ValueError(
+                f"Wards json file not found for any of the last {num_days} days."
+            )
+
     return wards
 
 
