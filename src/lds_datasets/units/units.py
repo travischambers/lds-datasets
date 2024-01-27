@@ -112,6 +112,11 @@ UNIT_TYPES = [
     "WARD__TRANSITIONAL",
     "WARD__GERMAN",
     "WARD__DEAF",
+    "WARD__FILIPINO",
+    "WARD__MONGOLIAN",
+    "WARD__UKRAINIAN",
+    "WARD__MALAY",
+    "WARD__SLOVAK",
 ]
 
 
