@@ -1225,7 +1225,7 @@ def write_units_json(units: set[Unit], unit_type: Literal["Stake", "Ward"]) -> N
     This method removes the old json files if they exist.
     e.g. If today is 2023_10_07, then we will delete 2023_10_05 and leave 2023_10_06.
     """
-    units_dict = [unit.model_dump() for unit in units]
+    units_list = [unit.model_dump() for unit in units]
     if unit_type == "Stake":
         file_path = Path(TODAY_STAKES_JSON)
         ereyesterday_path = Path(EREYESTERDAY_STAKES_JSON)
@@ -1241,17 +1241,7 @@ def write_units_json(units: set[Unit], unit_type: Literal["Stake", "Ward"]) -> N
     # write today's file
     file_path.parent.mkdir(parents=True, exist_ok=True)
     with open(file_path, "w") as f:
-        if unit_type == "Stake":
-            key = "stakes"
-        elif unit_type == "Ward":
-            key = "wards"
-        else:
-            raise ValueError(f"Invalid unit_type: {unit_type}")
-        units_output = {
-            key: units_dict,
-            "timestamp": script_start_time.isoformat(),
-        }
-        json.dump(units_output, f, indent=4)
+        json.dump(units_list, f, indent=4)
 
 
 def _get_wards_at_coords(
