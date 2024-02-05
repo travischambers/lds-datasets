@@ -9,6 +9,9 @@ wards = duckdb.read_json("data/wards_2024_02_04.json")
 wards_added = duckdb.read_json("data/daily/*/wards_added.json")
 wards_removed = duckdb.read_json("data/daily/*/wards_removed.json")
 
+branches_added = duckdb.read_json("data/daily/*/branches_added.json")
+branches_removed = duckdb.read_json("data/daily/*/branches_removed.json")
+
 # stakes per state in USA
 duckdb.sql("SELECT address.state, COUNT(*) FROM stakes WHERE address.countryCode3 = 'USA' GROUP BY address.state ORDER BY address.state")
 # wards per state in the USA
@@ -36,6 +39,68 @@ ORDER BY s.state;""")
 wards_added_per_state = duckdb.sql("SELECT address.state, COUNT(*) as count FROM wards_added WHERE address.countryCode3 = 'USA' GROUP BY address.state ORDER BY count DESC")
 # wards removed per state in the USA
 wards_removed_per_state = duckdb.sql("SELECT address.state, COUNT(*) as count FROM wards_removed WHERE address.countryCode3 = 'USA' GROUP BY address.state ORDER BY count DESC")
+
+# combined stakes added, removed, and net change per state in the USA
+net_change_usa_stakes = duckdb.sql("""
+SELECT a.state,
+            a.added,
+            r.removed,
+            a.added - r.removed AS net_change
+FROM
+    (SELECT address.state,
+            COUNT(*) AS added
+     FROM stakes_added
+     WHERE address.countryCode3 = 'USA'
+     GROUP BY address.state) a
+JOIN
+    (SELECT address.state,
+            COUNT(*) AS removed
+     FROM stakes_removed
+     WHERE address.countryCode3 = 'USA'
+     GROUP BY address.state) r ON a.state = r.state
+ORDER BY net_change ASC;
+""")
+
+# combined wards added, removed, and net change per state in the USA
+net_change_usa_wards = duckdb.sql("""
+SELECT a.state,
+         a.added,
+         r.removed,
+         a.added - r.removed AS net_change
+FROM
+    (SELECT address.state,
+            COUNT(*) AS added
+     FROM wards_added
+     WHERE address.countryCode3 = 'USA'
+     GROUP BY address.state) a
+JOIN
+    (SELECT address.state,
+            COUNT(*) AS removed
+     FROM wards_removed
+     WHERE address.countryCode3 = 'USA'
+     GROUP BY address.state) r ON a.state = r.state
+ORDER BY net_change ASC;
+""")
+
+net_change_usa_branches = duckdb.sql("""
+SELECT a.state,
+            a.added,
+            r.removed,
+            a.added - r.removed AS net_change
+FROM
+    (SELECT address.state,
+            COUNT(*) AS added
+     FROM branches_added
+     WHERE address.countryCode3 = 'USA'
+     GROUP BY address.state) a
+JOIN
+    (SELECT address.state,
+            COUNT(*) AS removed
+     FROM branches_removed
+     WHERE address.countryCode3 = 'USA'
+     GROUP BY address.state) r ON a.state = r.state
+ORDER BY net_change ASC;
+""")
 
 # stakes per country
 duckdb.sql("SELECT address.country, COUNT(*) FROM stakes GROUP BY address.country ORDER BY COUNT(*) DESC")
