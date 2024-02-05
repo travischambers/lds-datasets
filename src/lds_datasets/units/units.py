@@ -851,7 +851,7 @@ def get_stakes_json() -> set[Unit]:
     stakes: set[Unit] = set()
     with open(TODAY_STAKES_JSON, "r") as f:
         stakes_json = json.load(f)
-    for stake_json in stakes_json["stakes"]:
+    for stake_json in stakes_json:
         stake = Unit.model_validate(stake_json)
         stakes.add(stake)
     return stakes
@@ -863,7 +863,7 @@ def get_yesterday_stakes_json() -> set[Unit]:
     try:
         with open(YESTERDAY_STAKES_JSON, "r") as f:
             stakes_json = json.load(f)
-        for stake_json in stakes_json["stakes"]:
+        for stake_json in stakes_json:
             stake = Unit.model_validate(stake_json)
             stakes.add(stake)
     except FileNotFoundError:
@@ -881,7 +881,7 @@ def get_yesterday_stakes_json() -> set[Unit]:
                         prior_day=prior_day,
                     )
                     stakes_json = json.load(f)
-                for stake_json in stakes_json["stakes"]:
+                for stake_json in stakes_json:
                     stake = Unit.model_validate(stake_json)
                     stakes.add(stake)
                 break
@@ -905,7 +905,7 @@ def get_wards_json() -> set[Unit]:
     wards: set[Unit] = set()
     with open(TODAY_WARDS_JSON, "r") as f:
         wards_json = json.load(f)
-    for ward_json in wards_json["wards"]:
+    for ward_json in wards_json:
         ward = Unit.model_validate(ward_json)
         wards.add(ward)
     return wards
@@ -917,7 +917,7 @@ def get_yesterday_wards_json() -> set[Unit]:
     try:
         with open(YESTERDAY_WARDS_JSON, "r") as f:
             wards_json = json.load(f)
-        for ward_json in wards_json["wards"]:
+        for ward_json in wards_json:
             ward = Unit.model_validate(ward_json)
             wards.add(ward)
     except FileNotFoundError:
@@ -934,7 +934,7 @@ def get_yesterday_wards_json() -> set[Unit]:
                         "Found a wards json file from a prior day.", prior_day=prior_day
                     )
                     wards_json = json.load(f)
-                for ward_json in wards_json["wards"]:
+                for ward_json in wards_json:
                     ward = Unit.model_validate(ward_json)
                     wards.add(ward)
                 break

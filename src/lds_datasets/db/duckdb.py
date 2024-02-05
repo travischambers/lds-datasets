@@ -42,17 +42,17 @@ wards_removed_per_state = duckdb.sql("SELECT address.state, COUNT(*) as count FR
 
 # combined stakes added, removed, and net change per state in the USA
 net_change_usa_stakes = duckdb.sql("""
-SELECT a.state,
-            a.added,
-            r.removed,
-            a.added - r.removed AS net_change
+SELECT COALESCE(a.state, r.state) AS state,
+            COALESCE(a.added, 0) AS added,
+            COALESCE(r.removed, 0) AS removed,
+            COALESCE(a.added, 0) - COALESCE(r.removed, 0) AS net_change
 FROM
     (SELECT address.state,
             COUNT(*) AS added
      FROM stakes_added
      WHERE address.countryCode3 = 'USA'
      GROUP BY address.state) a
-JOIN
+FULL OUTER JOIN
     (SELECT address.state,
             COUNT(*) AS removed
      FROM stakes_removed
@@ -61,19 +61,20 @@ JOIN
 ORDER BY net_change ASC;
 """)
 
+
 # combined wards added, removed, and net change per state in the USA
 net_change_usa_wards = duckdb.sql("""
-SELECT a.state,
-         a.added,
-         r.removed,
-         a.added - r.removed AS net_change
+SELECT COALESCE(a.state, r.state) AS state,
+         COALESCE(a.added, 0) AS added,
+         COALESCE(r.removed, 0) AS removed,
+         COALESCE(a.added, 0) - COALESCE(r.removed, 0) AS net_change
 FROM
     (SELECT address.state,
             COUNT(*) AS added
      FROM wards_added
      WHERE address.countryCode3 = 'USA'
      GROUP BY address.state) a
-JOIN
+FULL OUTER JOIN
     (SELECT address.state,
             COUNT(*) AS removed
      FROM wards_removed
@@ -93,7 +94,7 @@ FROM
      FROM branches_added
      WHERE address.countryCode3 = 'USA'
      GROUP BY address.state) a
-JOIN
+OUTER JOIN
     (SELECT address.state,
             COUNT(*) AS removed
      FROM branches_removed
