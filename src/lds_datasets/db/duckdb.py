@@ -211,3 +211,10 @@ FULL OUTER JOIN
         GROUP BY address.country) r ON a.country = r.country
 ORDER BY net_change ASC;
 """)
+
+# get all bishops and branch president names and associated ward
+# these are stored in the `contact` field
+leaders = duckdb.sql("SELECT contact.name, contact.positionType.display as position, name as unit_name, address.country FROM wards").write_csv("leaders.csv")
+
+# count the number of wards where the "phones" field is not null, and contrast with the total wards
+duckdb.sql("SELECT COUNT(*) as count, COUNT(phones) as count_phones FROM wards")
