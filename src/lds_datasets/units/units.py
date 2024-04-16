@@ -222,12 +222,13 @@ regions: list[dict[str, Any]] = [
             # utah has ~5412 wards
             Coordinate(lon=-111.835, lat=41.735, city="Logan", nearest=1500),
             Coordinate(lon=-111.891, lat=40.875, city="Salt Lake City", nearest=1500),
-            Coordinate(lon=-111.891, lat=40.875, city="Salt Lake City", nearest=1500),
+            Coordinate(lon=-111.891, lat=40.825, city="Salt Lake City", nearest=1500),
             Coordinate(lon=-111.891, lat=40.775, city="Salt Lake City", nearest=1500),
             Coordinate(lon=-111.891, lat=40.675, city="Salt Lake City", nearest=1500),
             Coordinate(lon=-111.970, lat=40.658, city="Taylorsville", nearest=1500),
             Coordinate(lon=-112.044, lat=40.552, city="Daybreak", nearest=1500),
             Coordinate(lon=-111.910, lat=40.413, city="Lehi", nearest=1500),
+            Coordinate(lon=-111.739, lat=40.364, city="Pleasant Grove", nearest=1500),
             Coordinate(lon=-111.653, lat=40.374, city="Orem", nearest=1500),
             Coordinate(lon=-111.653, lat=40.274, city="Provo", nearest=1500),
             Coordinate(lon=-111.791, lat=40.038, city="Payson", nearest=1500),
@@ -259,7 +260,7 @@ regions: list[dict[str, Any]] = [
             Coordinate(lon=-103.491, lat=20.674, city="Guadalajara", nearest=2000),
             Coordinate(lon=-99.455, lat=19.391, city="Mexico City", nearest=2000),
             Coordinate(lon=-94.756, lat=16.245, city="Chiapas", nearest=2000),
-            # TODO split up canada until i get ~493 wards
+            # canada has ~493 wards
             Coordinate(lon=-151.942, lat=63.489, city="Yukon", nearest=500),
             Coordinate(lon=-113.556, lat=49.961, city="Alberta", nearest=500),
             Coordinate(lon=-105.443, lat=54.088, city="Manitoba", nearest=500),
@@ -1083,7 +1084,7 @@ def write_daily_files(
                 raise ValueError(f"Invalid unit_type: {unit_type}")
 
     logger.info(
-        f"Net units today.",
+        "Net units today.",
         unit_type=unit_type,
         units_added=len(units_added),
         units_removed=len(units_removed),
