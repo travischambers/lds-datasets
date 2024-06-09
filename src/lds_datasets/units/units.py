@@ -1,5 +1,7 @@
 """Scrape wards from the meetinghouse locator API."""
+
 import concurrent.futures
+import csv
 import json
 import threading
 import time
@@ -170,7 +172,7 @@ class Unit(BaseModel):
 
     id: str
     type: str
-    identifiers: Identifier
+    identifiers: Identifier | None = None
     name: str | None = None
     nameDisplay: str | None = None
     typeDisplay: str
@@ -419,6 +421,12 @@ class CountryStats(BaseModel):
     is_flag=True,
     help="Get stakes from web, vs local json.",
 )
+@click.option(
+    "--count_web",
+    default=False,
+    is_flag=True,
+    help="Get counts from web.",
+)
 @click.option("--skip_stats", default=False, is_flag=True, help="Skip stats.")
 @click.option(
     "--show_figs",
@@ -429,6 +437,7 @@ class CountryStats(BaseModel):
 def main(
     ward_web: bool,
     stake_web: bool,
+    count_web: bool,
     skip_stats: bool,
     show_figs: bool,
 ) -> None:
@@ -437,9 +446,14 @@ def main(
         "Starting script with flags.",
         ward_web=ward_web,
         stake_web=stake_web,
+        count_web=count_web,
         skip_stats=skip_stats,
         show_figs=show_figs,
     )
+
+    if count_web:
+        get_counts_and_add_to_csv()
+
     old_wards = get_yesterday_wards_json()
     ward_count_old, branch_count_old = count_unit_types(old_wards, "Ward")
     old_stakes = get_yesterday_stakes_json()
@@ -478,6 +492,51 @@ def main(
         net_wards,
         net_branches,
     )
+
+
+def get_counts_and_add_to_csv() -> None:
+    """Get counts from /count endpoint and append to daily_count.csv."""
+    base_url = "https://maps.churchofjesuschrist.org/api/maps-proxy/v2/locations/count"
+    layers = "WARD,WARD__YSA,WARD__STUDENT,WARD__SINGLE_ADULT,WARD__STUDENT_MARRIED,WARD__STUDENT_SINGLE,WARD__CAMBODIAN,WARD__CANTONESE,WARD__CHINESE,WARD__CHUUKIC_POHNPEIC,WARD__DINKA_NUER,WARD__ENGLISH,WARD__FIJIAN,WARD__FILIPINO,WARD__FRENCH,WARD__GERMAN,WARD__HAITIAN_CREOLE,WARD__HMONG,WARD__JAPANESE,WARD__KAREN,WARD__KIRIBATI,WARD__KOREAN,WARD__LAOTIAN,WARD__MANDARIN,WARD__MARSHALLESE,WARD__MONGOLIAN,WARD__MAORI,WARD__NEPALI,WARD__NIUEAN,WARD__PERSIAN,WARD__POHNPEIAN,WARD__PORTUGUESE,WARD__RUSSIAN,WARD__SAMOAN,WARD__SPANISH,WARD__SWAHILI,WARD__TAGALOG,WARD__TONGAN,WARD__UKRAINIAN,WARD__VIETNAMESE,WARD__ASIAN_YSA,WARD__FRENCH_YSA,WARD__SPANISH_YSA,WARD__TONGAN_YSA,WARD__SPANISH_STUDENT_MARRIED,WARD__MILITARY,WARD__NATIVE_AMERICAN,WARD__SEASONAL,WARD__DEAF,WARD__TRANSITIONAL,WARD__VISITOR,STAKE,STAKE__YSA,STAKE__ENGLISH,STAKE__FRENCH,STAKE__SPANISH,STAKE__TONGAN,STAKE__MILITARY,STAKE__STUDENT_MARRIED"
+    url = f"{base_url}?layers={layers}"
+    headers = {
+        "Accept": "application/json",
+        "Referer": "https://maps.churchofjesuschrist.org/",
+    }
+    response = requests.get(url=url, headers=headers)
+    response.raise_for_status()
+    data = response.json()
+    # data is expected to be shaped like:
+    # [
+    #     {"type": "WARD", "count": 28662},
+    #     {"type": "STAKE", "count": 3943},
+    #     ...
+    # ]
+    # Get current timestamp
+    timestamp = datetime.now()
+
+    new_types = [item["type"] for item in data]
+
+    with open("data/count.csv", mode='r', newline='') as file:
+        reader = csv.reader(file)
+        header = next(reader)
+
+    # Update header with new types
+    for t in new_types:
+        if t not in header:
+            header.append(t)
+
+    # Create the dictionary for the CSV row
+    row = {"timestamp": timestamp}
+
+    with open("data/count.csv", mode='a', newline='') as file:
+
+        for item in data:
+            row[item["type"]] = item["count"]
+
+        writer = csv.DictWriter(file, fieldnames=header)
+
+        writer.writerow(row)
 
 
 def append_daily_summary(
@@ -964,7 +1023,8 @@ def get_stakes_from_web() -> set[Unit]:
     base_url = (
         "https://maps.churchofjesuschrist.org/api/maps-proxy/v2/locations/identify"
     )
-    layers = "STAKE"
+
+    layers = "STAKE,STAKE__YSA,STAKE__ENGLISH,STAKE__FRENCH,STAKE__SPANISH,STAKE__TONGAN,STAKE__MILITARY,STAKE__STUDENT_MARRIED"
     filters = ""
     coordinates = [
         Coordinate(lon=-111.891, lat=40.875, city="Salt Lake City", nearest=1000),
@@ -1174,7 +1234,8 @@ def get_wards_from_web() -> set[Unit]:
         total_requests += 1
 
     # WARD is the largest unit_type with ~27000.
-    layers = "WARD"
+    # layers = "WARD"
+    layers = "WARD,WARD__YSA,WARD__STUDENT,WARD__SINGLE_ADULT,WARD__STUDENT_MARRIED,WARD__STUDENT_SINGLE,WARD__CAMBODIAN,WARD__CANTONESE,WARD__CHINESE,WARD__CHUUKIC_POHNPEIC,WARD__DINKA_NUER,WARD__ENGLISH,WARD__FIJIAN,WARD__FILIPINO,WARD__FRENCH,WARD__GERMAN,WARD__HAITIAN_CREOLE,WARD__HMONG,WARD__JAPANESE,WARD__KAREN,WARD__KIRIBATI,WARD__KOREAN,WARD__LAOTIAN,WARD__MANDARIN,WARD__MARSHALLESE,WARD__MONGOLIAN,WARD__MAORI,WARD__NEPALI,WARD__NIUEAN,WARD__PERSIAN,WARD__POHNPEIAN,WARD__PORTUGUESE,WARD__RUSSIAN,WARD__SAMOAN,WARD__SPANISH,WARD__SWAHILI,WARD__TAGALOG,WARD__TONGAN,WARD__UKRAINIAN,WARD__VIETNAMESE,WARD__ASIAN_YSA,WARD__FRENCH_YSA,WARD__SPANISH_YSA,WARD__TONGAN_YSA,WARD__SPANISH_STUDENT_MARRIED,WARD__MILITARY,WARD__NATIVE_AMERICAN,WARD__SEASONAL,WARD__DEAF,WARD__TRANSITIONAL,WARD__VISITOR"
     for region in regions:
         region_start_time = time.time()
         pre_region_update_count = len(wards)
