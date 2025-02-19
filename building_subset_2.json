@@ -1,0 +1,21 @@
+[
+    {
+        "id": "5150124-01-01",
+        "name": "Mililani SC",
+        "address": {
+            "street1": "95-1039 Meheula Parkway",
+            "city": "MILILANI",
+            "county": "HONOLULU",
+            "state": "Hawaii",
+            "postalCode": "96789-1765",
+            "country": "United States"
+        },
+        "created": "1980-01-01",
+        "updated": "2023-06-20T20:17:40Z"
+    },
+    {
+        "id": "6160125-01-01",
+        "name": "Mililani Other",
+        "updated": "2023-06-20T20:17:40Z"
+    }
+]

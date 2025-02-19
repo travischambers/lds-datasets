@@ -1,0 +1,254 @@
+    {
+        "id": "5150124-01-01",
+        "type": "MEETINGHOUSE",
+        "identifiers": {
+            "facilityId": "5150124-01-01",
+            "structureId": "5150124-01",
+            "propertyId": 5150124
+        },
+        "name": "Mililani SC",
+        "nameDisplay": "Mililani SC",
+        "typeDisplay": "Meetinghouse",
+        "address": {
+            "street1": "95-1039 Meheula Parkway",
+            "city": "MILILANI",
+            "county": "HONOLULU",
+            "state": "Hawaii",
+            "stateId": 11,
+            "stateCode": "HI",
+            "postalCode": "96789-1765",
+            "country": "United States",
+            "countryId": 251,
+            "countryCode2": "US",
+            "countryCode3": "USA",
+            "formatted": "95-1039 Meheula Parkway, MILILANI, Hawaii 96789-1765, United States",
+            "lines": [
+                "95-1039 Meheula Parkway",
+                "MILILANI, Hawaii 96789-1765",
+                "United States"
+            ]
+        },
+        "hours": {
+            "code": "Su 08:30-10:30",
+            "days": [
+                {
+                    "code": "Su 08:30-10:30",
+                    "display": "Sunday 8:30 AM - 10:30 AM",
+                    "day": {
+                        "code": "SUNDAY",
+                        "display": "Sunday"
+                    },
+                    "hours": {
+                        "code": "08:30-10:30",
+                        "display": "8:30 AM - 10:30 AM",
+                        "ranges": [
+                            {
+                                "code": "08:30-10:30",
+                                "display": "8:30 AM - 10:30 AM",
+                                "start": {
+                                    "code": "08:30:00",
+                                    "display": "8:30 AM"
+                                },
+                                "finish": {
+                                    "code": "10:30:00",
+                                    "display": "10:30 AM"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "timeZone": {
+            "id": "Pacific/Honolulu",
+            "code": "HST",
+            "offset": "-10:00",
+            "display": "Hawaii-Aleutian Time"
+        },
+        "propertySize": {
+            "value": 11817,
+            "type": "SQUARE_METER",
+            "display": "11,817 m²"
+        },
+        "interiorSize": {
+            "value": 2531,
+            "type": "SQUARE_METER",
+            "display": "2,531 m²"
+        },
+        "parkingOnsite": 181,
+        "parkingOffsite": 0,
+        "specialized": false,
+        "coordinates": [
+            -158.013962,
+            21.450904
+        ],
+        "coordinatesUpdated": "2023-06-20T19:51:05Z",
+        "geocodes": [
+            {
+                "code": "73H3FX2P+9C",
+                "type": "PLUS_CODE"
+            }
+        ],
+        "associated": [
+            {
+                "id": "441066",
+                "type": "WARD",
+                "identifiers": {
+                    "facilityId": "5150124-01-01",
+                    "structureId": "5150124-01",
+                    "propertyId": 5150124,
+                    "unitNumber": 441066,
+                    "orgId": 72234
+                },
+                "name": "Mililani  4th Ward",
+                "nameDisplay": "Mililani  4th Ward",
+                "typeDisplay": "Ward",
+                "hours": {
+                    "code": "Su 08:30-10:30",
+                    "days": [
+                        {
+                            "code": "Su 08:30-10:30",
+                            "display": "Sunday 8:30 AM - 10:30 AM",
+                            "day": {
+                                "code": "SUNDAY",
+                                "display": "Sunday"
+                            },
+                            "hours": {
+                                "code": "08:30-10:30",
+                                "display": "8:30 AM - 10:30 AM",
+                                "ranges": [
+                                    {
+                                        "code": "08:30-10:30",
+                                        "display": "8:30 AM - 10:30 AM",
+                                        "start": {
+                                            "code": "08:30:00",
+                                            "display": "8:30 AM"
+                                        },
+                                        "finish": {
+                                            "code": "10:30:00",
+                                            "display": "10:30 AM"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "primary": {
+                        "code": "Su 08:30",
+                        "display": "Sunday 8:30 AM",
+                        "day": {
+                            "code": "SUNDAY",
+                            "display": "Sunday"
+                        },
+                        "hour": {
+                            "code": "08:30:00",
+                            "display": "8:30 AM"
+                        }
+                    },
+                    "open": {
+                        "code": "Su 08:30",
+                        "display": "Sunday 8:30 AM",
+                        "day": {
+                            "code": "SUNDAY",
+                            "display": "Sunday"
+                        },
+                        "hour": {
+                            "code": "08:30:00",
+                            "display": "8:30 AM"
+                        }
+                    }
+                },
+                "language": {
+                    "id": 0,
+                    "code": "eng",
+                    "display": "English"
+                }
+            },
+            {
+                "id": "247693",
+                "type": "WARD",
+                "identifiers": {
+                    "facilityId": "5150124-01-01",
+                    "structureId": "5150124-01",
+                    "propertyId": 5150124,
+                    "unitNumber": 247693,
+                    "orgId": 11413
+                },
+                "name": "Waipiolani Ward",
+                "nameDisplay": "Waipiolani Ward",
+                "typeDisplay": "Ward",
+                "hours": {
+                    "code": "Su 08:30-10:30",
+                    "days": [
+                        {
+                            "code": "Su 08:30-10:30",
+                            "display": "Sunday 8:30 AM - 10:30 AM",
+                            "day": {
+                                "code": "SUNDAY",
+                                "display": "Sunday"
+                            },
+                            "hours": {
+                                "code": "08:30-10:30",
+                                "display": "8:30 AM - 10:30 AM",
+                                "ranges": [
+                                    {
+                                        "code": "08:30-10:30",
+                                        "display": "8:30 AM - 10:30 AM",
+                                        "start": {
+                                            "code": "08:30:00",
+                                            "display": "8:30 AM"
+                                        },
+                                        "finish": {
+                                            "code": "10:30:00",
+                                            "display": "10:30 AM"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "primary": {
+                        "code": "Su 08:30",
+                        "display": "Sunday 8:30 AM",
+                        "day": {
+                            "code": "SUNDAY",
+                            "display": "Sunday"
+                        },
+                        "hour": {
+                            "code": "08:30:00",
+                            "display": "8:30 AM"
+                        }
+                    },
+                    "open": {
+                        "code": "Su 08:30",
+                        "display": "Sunday 8:30 AM",
+                        "day": {
+                            "code": "SUNDAY",
+                            "display": "Sunday"
+                        },
+                        "hour": {
+                            "code": "08:30:00",
+                            "display": "8:30 AM"
+                        }
+                    }
+                },
+                "language": {
+                    "id": 0,
+                    "code": "eng",
+                    "display": "English"
+                }
+            }
+        ],
+        "match": {
+            "distance": {
+                "value": 919.9032259840521,
+                "type": "METER",
+                "display": "919.9 m"
+            },
+            "index": 0,
+            "total": 3
+        },
+        "provider": "INTERNAL",
+        "created": "1980-01-01",
+        "updated": "2023-06-20T20:17:40Z"
+    }

@@ -1,0 +1,419 @@
+[
+    {
+        "id": "5008579-01-01",
+        "type": "MEETINGHOUSE",
+        "identifiers": {
+            "facilityId": "5008579-01-01",
+            "structureId": "5008579-01",
+            "propertyId": 5008579
+        },
+        "name": "Acaponeta (Nueva Renta)",
+        "nameDisplay": "Acaponeta",
+        "typeDisplay": "Meetinghouse",
+        "address": {
+            "street1": "Acaponeta",
+            "city": "SANTIAGO IXCUINTLA",
+            "state": "Nayarit",
+            "stateId": 1601,
+            "stateCode": "NAY",
+            "country": "Mexico",
+            "countryId": 179,
+            "countryCode2": "MX",
+            "countryCode3": "MEX",
+            "formatted": "Acaponeta, SANTIAGO IXCUINTLA, Nayarit, Mexico",
+            "lines": [
+                "Acaponeta",
+                "SANTIAGO IXCUINTLA, Nayarit",
+                "Mexico"
+            ]
+        },
+        "parkingOnsite": 0,
+        "parkingOffsite": 0,
+        "specialized": false,
+        "coordinates": [
+            0.0,
+            0.0
+        ],
+        "coordinatesUpdated": "2023-07-20T12:40:00Z",
+        "geocodes": [
+            {
+                "code": "6FG22222+22",
+                "type": "PLUS_CODE"
+            }
+        ],
+        "match": {
+            "distance": {
+                "value": 0.0,
+                "type": "METER",
+                "display": "0 m"
+            },
+            "index": 0,
+            "total": 19322
+        },
+        "provider": "INTERNAL",
+        "updated": "2023-07-20T12:40:00Z"
+    },
+    {
+        "id": "5020809-01-01",
+        "type": "MEETINGHOUSE",
+        "identifiers": {
+            "facilityId": "5020809-01-01",
+            "structureId": "5020809-01",
+            "propertyId": 5020809
+        },
+        "name": "Alamedas, Lomas (Busqueda)",
+        "nameDisplay": "Alamedas, Lomas",
+        "typeDisplay": "Meetinghouse",
+        "address": {
+            "street1": "Colonia Juarez",
+            "city": "COLONIA DUBLAN",
+            "state": "Chihuahua",
+            "stateId": 1397,
+            "stateCode": "CHIH",
+            "country": "Mexico",
+            "countryId": 179,
+            "countryCode2": "MX",
+            "countryCode3": "MEX",
+            "formatted": "Colonia Juarez, COLONIA DUBLAN, Chihuahua, Mexico",
+            "lines": [
+                "Colonia Juarez",
+                "COLONIA DUBLAN, Chihuahua",
+                "Mexico"
+            ]
+        },
+        "specialized": false,
+        "coordinates": [
+            0.0,
+            0.0
+        ],
+        "coordinatesUpdated": "2023-06-20T19:51:05Z",
+        "geocodes": [
+            {
+                "code": "6FG22222+22",
+                "type": "PLUS_CODE"
+            }
+        ],
+        "match": {
+            "distance": {
+                "value": 0.0,
+                "type": "METER",
+                "display": "0 m"
+            },
+            "index": 1,
+            "total": 19322
+        },
+        "provider": "INTERNAL",
+        "updated": "2023-06-20T20:17:40Z"
+    },
+    {
+        "id": "5021830-01-01",
+        "type": "MEETINGHOUSE",
+        "identifiers": {
+            "facilityId": "5021830-01-01",
+            "structureId": "5021830-01",
+            "propertyId": 5021830
+        },
+        "name": "Alborada, Bugambilias (Busqueda)",
+        "nameDisplay": "Alborada, Bugambilias",
+        "typeDisplay": "Meetinghouse",
+        "address": {
+            "street1": "Alborada, Bugambilias",
+            "city": "XALAPA",
+            "state": "Veracruz",
+            "stateId": 1583,
+            "stateCode": "VER",
+            "country": "Mexico",
+            "countryId": 179,
+            "countryCode2": "MX",
+            "countryCode3": "MEX",
+            "formatted": "Alborada, Bugambilias, XALAPA, Veracruz, Mexico",
+            "lines": [
+                "Alborada, Bugambilias",
+                "XALAPA, Veracruz",
+                "Mexico"
+            ]
+        },
+        "specialized": false,
+        "coordinates": [
+            0.0,
+            0.0
+        ],
+        "coordinatesUpdated": "2023-07-14T12:40:00Z",
+        "geocodes": [
+            {
+                "code": "6FG22222+22",
+                "type": "PLUS_CODE"
+            }
+        ],
+        "match": {
+            "distance": {
+                "value": 0.0,
+                "type": "METER",
+                "display": "0 m"
+            },
+            "index": 2,
+            "total": 19322
+        },
+        "provider": "INTERNAL",
+        "updated": "2023-07-14T12:40:00Z"
+    },
+    {
+        "id": "5021614-01-01",
+        "type": "MEETINGHOUSE",
+        "identifiers": {
+            "facilityId": "5021614-01-01",
+            "structureId": "5021614-01",
+            "propertyId": 5021614
+        },
+        "name": "Allende (Busqueda renta)",
+        "nameDisplay": "Allende",
+        "typeDisplay": "Meetinghouse",
+        "address": {
+            "street1": "Allende",
+            "city": "LINARES",
+            "state": "Nuevo Leon",
+            "stateId": 1475,
+            "stateCode": "NL",
+            "country": "Mexico",
+            "countryId": 179,
+            "countryCode2": "MX",
+            "countryCode3": "MEX",
+            "formatted": "Allende, LINARES, Nuevo Leon, Mexico",
+            "lines": [
+                "Allende",
+                "LINARES, Nuevo Leon",
+                "Mexico"
+            ]
+        },
+        "specialized": false,
+        "coordinates": [
+            0.0,
+            0.0
+        ],
+        "coordinatesUpdated": "2023-07-16T00:40:00Z",
+        "geocodes": [
+            {
+                "code": "6FG22222+22",
+                "type": "PLUS_CODE"
+            }
+        ],
+        "match": {
+            "distance": {
+                "value": 0.0,
+                "type": "METER",
+                "display": "0 m"
+            },
+            "index": 3,
+            "total": 19322
+        },
+        "provider": "INTERNAL",
+        "updated": "2023-07-15T12:40:00Z"
+    },
+    {
+        "id": "5021396-01-01",
+        "type": "MEETINGHOUSE",
+        "identifiers": {
+            "facilityId": "5021396-01-01",
+            "structureId": "5021396-01",
+            "propertyId": 5021396
+        },
+        "name": "Americas (Busqueda)",
+        "nameDisplay": "Americas",
+        "typeDisplay": "Meetinghouse",
+        "address": {
+            "street1": "Chihuahua",
+            "city": "CHIHUAHUA",
+            "state": "Chihuahua",
+            "stateId": 1397,
+            "stateCode": "CHIH",
+            "country": "Mexico",
+            "countryId": 179,
+            "countryCode2": "MX",
+            "countryCode3": "MEX",
+            "formatted": "Chihuahua, CHIHUAHUA, Chihuahua, Mexico",
+            "lines": [
+                "Chihuahua",
+                "CHIHUAHUA, Chihuahua",
+                "Mexico"
+            ]
+        },
+        "specialized": false,
+        "coordinates": [
+            0.0,
+            0.0
+        ],
+        "coordinatesUpdated": "2023-06-20T19:51:05Z",
+        "geocodes": [
+            {
+                "code": "6FG22222+22",
+                "type": "PLUS_CODE"
+            }
+        ],
+        "match": {
+            "distance": {
+                "value": 0.0,
+                "type": "METER",
+                "display": "0 m"
+            },
+            "index": 4,
+            "total": 19322
+        },
+        "provider": "INTERNAL",
+        "updated": "2023-06-20T20:17:40Z"
+    },
+    {
+        "id": "5021645-01-01",
+        "type": "MEETINGHOUSE",
+        "identifiers": {
+            "facilityId": "5021645-01-01",
+            "structureId": "5021645-01",
+            "propertyId": 5021645
+        },
+        "name": "Andalucia (Renta)",
+        "nameDisplay": "Andalucia",
+        "typeDisplay": "Meetinghouse",
+        "address": {
+            "street1": "Andalucia",
+            "city": "TIZAYUCA",
+            "state": "Hidalgo",
+            "stateId": 1605,
+            "stateCode": "HGO",
+            "country": "Mexico",
+            "countryId": 179,
+            "countryCode2": "MX",
+            "countryCode3": "MEX",
+            "formatted": "Andalucia, TIZAYUCA, Hidalgo, Mexico",
+            "lines": [
+                "Andalucia",
+                "TIZAYUCA, Hidalgo",
+                "Mexico"
+            ]
+        },
+        "specialized": false,
+        "coordinates": [
+            0.0,
+            0.0
+        ],
+        "coordinatesUpdated": "2023-06-20T19:51:05Z",
+        "geocodes": [
+            {
+                "code": "6FG22222+22",
+                "type": "PLUS_CODE"
+            }
+        ],
+        "match": {
+            "distance": {
+                "value": 0.0,
+                "type": "METER",
+                "display": "0 m"
+            },
+            "index": 5,
+            "total": 19322
+        },
+        "provider": "INTERNAL",
+        "updated": "2023-06-20T20:17:40Z"
+    },
+    {
+        "id": "5003513-01-01",
+        "type": "MEETINGHOUSE",
+        "identifiers": {
+            "facilityId": "5003513-01-01",
+            "structureId": "5003513-01",
+            "propertyId": 5003513
+        },
+        "name": "Atzingo (Busqueda)",
+        "nameDisplay": "Atzingo",
+        "typeDisplay": "Meetinghouse",
+        "address": {
+            "street1": "Cuernavaca",
+            "city": "CUERNAVACA",
+            "state": "Morelos",
+            "stateId": 1676,
+            "stateCode": "MOR",
+            "country": "Mexico",
+            "countryId": 179,
+            "countryCode2": "MX",
+            "countryCode3": "MEX",
+            "formatted": "Cuernavaca, CUERNAVACA, Morelos, Mexico",
+            "lines": [
+                "Cuernavaca",
+                "CUERNAVACA, Morelos",
+                "Mexico"
+            ]
+        },
+        "parkingOnsite": 0,
+        "parkingOffsite": 0,
+        "specialized": false,
+        "coordinates": [
+            0.0,
+            0.0
+        ],
+        "coordinatesUpdated": "2023-07-14T12:40:00Z",
+        "geocodes": [
+            {
+                "code": "6FG22222+22",
+                "type": "PLUS_CODE"
+            }
+        ],
+        "match": {
+            "distance": {
+                "value": 0.0,
+                "type": "METER",
+                "display": "0 m"
+            },
+            "index": 6,
+            "total": 19322
+        },
+        "provider": "INTERNAL",
+        "updated": "2023-07-14T12:40:00Z"
+    },
+    {
+        "id": "5021259-01-01",
+        "type": "MEETINGHOUSE",
+        "identifiers": {
+            "facilityId": "5021259-01-01",
+            "structureId": "5021259-01",
+            "propertyId": 5021259
+        },
+        "name": "Aztlan (Renta Pkg)",
+        "nameDisplay": "Aztlan",
+        "typeDisplay": "Meetinghouse",
+        "address": {
+            "street1": "Aztlan",
+            "city": "CIUDAD DE MEXICO",
+            "country": "Mexico",
+            "countryId": 179,
+            "countryCode2": "MX",
+            "countryCode3": "MEX",
+            "formatted": "Aztlan, CIUDAD DE MEXICO, Mexico",
+            "lines": [
+                "Aztlan",
+                "CIUDAD DE MEXICO",
+                "Mexico"
+            ]
+        },
+        "specialized": false,
+        "coordinates": [
+            0.0,
+            0.0
+        ],
+        "coordinatesUpdated": "2023-06-20T19:51:05Z",
+        "geocodes": [
+            {
+                "code": "6FG22222+22",
+                "type": "PLUS_CODE"
+            }
+        ],
+        "match": {
+            "distance": {
+                "value": 0.0,
+                "type": "METER",
+                "display": "0 m"
+            },
+            "index": 7,
+            "total": 19322
+        },
+        "provider": "INTERNAL",
+        "updated": "2023-06-20T20:17:40Z"
+    }
+]
