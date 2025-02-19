@@ -23,6 +23,7 @@ from lds_datasets.logging import setup_logging
 script_start_time = datetime.now()
 script_start_second = script_start_time.strftime("%Y_%m_%d_%H:%M:%S")
 script_start_day = script_start_time.strftime("%Y_%m_%d")
+script_start_day_dash = script_start_time.strftime("%Y-%m-%d")
 
 yesterday = (script_start_time - timedelta(days=1)).strftime("%Y_%m_%d")
 ereyesterday = (script_start_time - timedelta(days=2)).strftime("%Y_%m_%d")
@@ -74,6 +75,8 @@ UNIT_TYPES = [
     "WARD__RUSSIAN",
     "WARD__PORTUGUESE",
     "WARD__YSA",
+    "WARD__YSA_SR",
+    "WARD__YSA_JR",
     "WARD__TONGAN",
     "WARD__STUDENT",
     "WARD__MARSHALLESE",
@@ -133,7 +136,7 @@ class Address(BaseModel):
     stateId: int | None = None
     stateCode: str | None = None
     postalCode: str | None = None
-    country: str
+    country: str | None = None
     countryId: int | None = None
     countryCode2: str | None = None
     countryCode3: str | None = None
@@ -144,7 +147,7 @@ class Address(BaseModel):
 class Language(BaseModel):
     """Data model for a language."""
 
-    id: int
+    id: int | None = None
     code: str | None = None
     display: str | None = None
 
@@ -188,7 +191,7 @@ class Unit(BaseModel):
     specialized: bool | None = None
     notes: str | None = None
     created: str | None = None
-    updated: str
+    updated: str | None = None
 
     def __hash__(self):
         return hash((self.id, self.name))
@@ -567,10 +570,10 @@ def append_daily_summary(
     df = pd.read_csv("data/daily_summary.csv", dtype=dtype_dict)
     last_line = df.iloc[-1]
     last_line_date = last_line["scrape_timestamp"]
-    if last_line_date == script_start_day:
+    if last_line_date == script_start_day_dash:
         # overwrite last line
         df.iloc[-1] = [
-            script_start_day,
+            script_start_day_dash,
             total_stakes,
             total_districts,
             total_wards,
@@ -583,7 +586,7 @@ def append_daily_summary(
     else:
         # append today's data
         df.loc[len(df)] = [
-            script_start_day,
+            script_start_day_dash,
             total_stakes,
             total_districts,
             total_wards,
@@ -927,7 +930,7 @@ def get_yesterday_stakes_json() -> set[Unit]:
             stake = Unit.model_validate(stake_json)
             stakes.add(stake)
     except FileNotFoundError:
-        num_days = 10
+        num_days = 15
         logger.warning(
             "Yesterday's stakes json not found. Did the script run yesterday? Looking back several days for a file."
         )  # noqa: E501
@@ -981,7 +984,7 @@ def get_yesterday_wards_json() -> set[Unit]:
             ward = Unit.model_validate(ward_json)
             wards.add(ward)
     except FileNotFoundError:
-        num_days = 10
+        num_days = 15
         logger.warning(
             "Yesterday's wards json not found. Did the script run yesterday? Looking back several days for a file."
         )  # noqa: E501
@@ -1027,14 +1030,32 @@ def get_stakes_from_web() -> set[Unit]:
     layers = "STAKE,STAKE__YSA,STAKE__ENGLISH,STAKE__FRENCH,STAKE__SPANISH,STAKE__TONGAN,STAKE__MILITARY,STAKE__STUDENT_MARRIED"
     filters = ""
     coordinates = [
-        Coordinate(lon=-111.891, lat=40.875, city="Salt Lake City", nearest=1000),
+        Coordinate(lon=-111.89, lat=40.88, city="Salt Lake City", nearest=750),
+        Coordinate(lon=-113.57, lat=37.10, city="St George", nearest=500),
+        Coordinate(lon=-117.42, lat=47.66, city="Spokane", nearest=500),
+        Coordinate(lon=-113.49, lat=53.55, city="Edmonton", nearest=300),
         Coordinate(lon=-119.036, lat=34.019, city="Los Angeles", nearest=1000),
         Coordinate(lon=-99.455, lat=19.391, city="Mexico City", nearest=1000),
         Coordinate(lon=-48.020, lat=-15.722, city="Brasilia", nearest=1000),
-        Coordinate(lon=-77.097, lat=38.894, city="Washington DC", nearest=1000),
-        Coordinate(lon=13.260, lat=52.507, city="Berlin", nearest=1000),
-        Coordinate(lon=151.209, lat=33.869, city="Sydney", nearest=1000),
+        Coordinate(lon=-77.097, lat=38.894, city="Washington DC", nearest=750),
+        Coordinate(lon=13.260, lat=52.507, city="Berlin", nearest=250),
+        Coordinate(lon=0.13, lat=51.50, city="London", nearest=150),
+        Coordinate(lon=151.209, lat=33.869, city="Sydney", nearest=500),
+        Coordinate(lon=121, lat=14.6, city="Manila", nearest=250),
+        # africa
+        Coordinate(lon=19.07, lat=6.20, city="Bangui", nearest=400),
+        # oceania
+        Coordinate(lon=171.773220, lat=-13.831491, city="Apia", nearest=200),
+        # south america
+        # northern edge, Venezuela
+        Coordinate(lon=-66.89, lat=10.46, city="Caracas", nearest=200),
+        # southern tip of Chile
+        Coordinate(lon=-70.97, lat=-53.23, city="Punta Arenas", nearest=200),
     ]
+    logger.info(
+        "Starting scrape of global stakes.",
+        num_regions=len(coordinates),
+    )
     scrape_start_time = time.time()
     stakes: set[Unit] = set()
     for coordinate in coordinates:
@@ -1042,7 +1063,20 @@ def get_stakes_from_web() -> set[Unit]:
         nearest = coordinate.nearest
         coord = f"{coordinate.lon},{coordinate.lat}"
         url = f"{base_url}?layers={layers}&filters={filters}&coordinates={coord}&nearest={nearest}"
-        response = requests.get(url, headers=headers)
+        try:
+            response = requests.get(url, headers=headers)
+        except requests.exceptions.ConnectionError as e:
+            logger.error("Error getting stakes from web. Retrying...", error=e)
+            try:
+                response = requests.get(url, headers=headers)
+            except Exception as e:
+                logger.error(
+                    "Error getting stakes from web on retry. Skipping.",
+                    error=e,
+                    city=coordinate.city,
+                )
+                continue
+
         data = response.json()
         stake_models = [Unit.model_validate(stake) for stake in data]
 
@@ -1056,9 +1090,13 @@ def get_stakes_from_web() -> set[Unit]:
             region_name=coordinate.city,
             region_time=region_end_time - region_start_time,
             num_stakes_added=post_update_count - pre_update_count,
-            num_duplicates=len(data) - (post_update_count - pre_update_count),
+            num_duplicates=len(stake_models) - (post_update_count - pre_update_count),
             max_stakes=nearest,
             num_api_requests=1,
+            pre_update_count=pre_update_count,
+            post_update_count=post_update_count,
+            total_stakes=len(stakes),
+            total_stakes_for_region=len(stake_models),
         )
     scrape_end_time = time.time()
     logger.info(
@@ -1208,8 +1246,8 @@ def get_wards_from_web() -> set[Unit]:
                 )
 
     logger.info(
-        "Starting scrape of wards from web.",
-        num_regions=len(regions),
+        "Starting scrape of global wards by unit type.",
+        num_regions=len(UNIT_TYPES),
     )
     wards: set[Unit] = set()
     scrape_start_time = time.time()
@@ -1228,14 +1266,18 @@ def get_wards_from_web() -> set[Unit]:
             filters=filters,
             headers=headers,
             region_name="Global",
-            nearest=2000,
+            nearest=1500,
             lock=lock,
         )
         total_requests += 1
 
+    logger.info(
+        "Starting scrape of wards from web.",
+        num_regions=len(regions),
+    )
     # WARD is the largest unit_type with ~27000.
     # layers = "WARD"
-    layers = "WARD,WARD__YSA,WARD__STUDENT,WARD__SINGLE_ADULT,WARD__STUDENT_MARRIED,WARD__STUDENT_SINGLE,WARD__CAMBODIAN,WARD__CANTONESE,WARD__CHINESE,WARD__CHUUKIC_POHNPEIC,WARD__DINKA_NUER,WARD__ENGLISH,WARD__FIJIAN,WARD__FILIPINO,WARD__FRENCH,WARD__GERMAN,WARD__HAITIAN_CREOLE,WARD__HMONG,WARD__JAPANESE,WARD__KAREN,WARD__KIRIBATI,WARD__KOREAN,WARD__LAOTIAN,WARD__MANDARIN,WARD__MARSHALLESE,WARD__MONGOLIAN,WARD__MAORI,WARD__NEPALI,WARD__NIUEAN,WARD__PERSIAN,WARD__POHNPEIAN,WARD__PORTUGUESE,WARD__RUSSIAN,WARD__SAMOAN,WARD__SPANISH,WARD__SWAHILI,WARD__TAGALOG,WARD__TONGAN,WARD__UKRAINIAN,WARD__VIETNAMESE,WARD__ASIAN_YSA,WARD__FRENCH_YSA,WARD__SPANISH_YSA,WARD__TONGAN_YSA,WARD__SPANISH_STUDENT_MARRIED,WARD__MILITARY,WARD__NATIVE_AMERICAN,WARD__SEASONAL,WARD__DEAF,WARD__TRANSITIONAL,WARD__VISITOR"
+    layers = "WARD"
     for region in regions:
         region_start_time = time.time()
         pre_region_update_count = len(wards)
