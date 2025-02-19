@@ -65,7 +65,46 @@ ORDER BY net_change ASC;
 """)
 
 # combined wards added, removed, and net change per state in the USA
+# this filters out wards that were added/removed due to meetinghouse API inconsistency
 net_change_usa_wards = duckdb.sql("""
+WITH filtered_added AS (
+    SELECT wa.address.state, wa.id
+    FROM wards_added wa
+    LEFT JOIN wards_removed wr
+        ON wa.id = wr.id
+    WHERE wa.address.countryCode3 = 'USA'
+      AND wr.id IS NULL
+),
+filtered_removed AS (
+    SELECT wr.address.state, wr.id
+    FROM wards_removed wr
+    LEFT JOIN wards_added wa
+        ON wr.id = wa.id
+    WHERE wr.address.countryCode3 = 'USA'
+      AND wa.id IS NULL
+),
+added_counts AS (
+    SELECT state, COUNT(*) AS added
+    FROM filtered_added
+    GROUP BY state
+),
+removed_counts AS (
+    SELECT state, COUNT(*) AS removed
+    FROM filtered_removed
+    GROUP BY state
+)
+SELECT 
+    COALESCE(a.state, r.state) AS state,
+    COALESCE(a.added, 0) AS added,
+    COALESCE(r.removed, 0) AS removed,
+    COALESCE(a.added, 0) - COALESCE(r.removed, 0) AS net_change
+FROM added_counts a
+FULL OUTER JOIN removed_counts r
+    ON a.state = r.state
+ORDER BY net_change ASC;
+""")
+
+net_change_usa_branches = duckdb.sql("""
 SELECT COALESCE(a.state, r.state) AS state,
          COALESCE(a.added, 0) AS added,
          COALESCE(r.removed, 0) AS removed,
@@ -73,30 +112,10 @@ SELECT COALESCE(a.state, r.state) AS state,
 FROM
     (SELECT address.state,
             COUNT(*) AS added
-     FROM wards_added
-     WHERE address.countryCode3 = 'USA'
-     GROUP BY address.state) a
-FULL OUTER JOIN
-    (SELECT address.state,
-            COUNT(*) AS removed
-     FROM wards_removed
-     WHERE address.countryCode3 = 'USA'
-     GROUP BY address.state) r ON a.state = r.state
-ORDER BY net_change ASC;
-""")
-
-net_change_usa_branches = duckdb.sql("""
-SELECT a.state,
-            a.added,
-            r.removed,
-            a.added - r.removed AS net_change
-FROM
-    (SELECT address.state,
-            COUNT(*) AS added
      FROM branches_added
      WHERE address.countryCode3 = 'USA'
      GROUP BY address.state) a
-OUTER JOIN
+FULL OUTER JOIN
     (SELECT address.state,
             COUNT(*) AS removed
      FROM branches_removed
